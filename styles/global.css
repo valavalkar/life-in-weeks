@@ -30,3 +30,22 @@ img {
   max-width: 100%;
   height: auto;
 }
+
+.week-number, .week-box {
+  width: 18px; /* Adjust the width as necessary to fit the boxes */
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Assuming that you have a container that holds all the week numbers */
+.week-number-container {
+  display: flex;
+  justify-content: space-between; /* or 'flex-start' if you're not spacing them out */
+}
+
+/* Assuming that you have a container for each row of week boxes */
+.week-row {
+  display: flex;
+  justify-content: space-between; /* or 'flex-start' if you're not spacing them out */
+}
+

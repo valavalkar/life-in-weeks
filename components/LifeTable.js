@@ -34,7 +34,7 @@ function LifeWeeksTable({ birthday, highlightCriteria }) {
 
     let currentWeekStart = thisBirthday;
 
-    for (let week = 1; week <= 52; week++) {
+    for (let week = 1; week < 52; week++) {
       let nextWeekStart = currentWeekStart.plus({ days: 7 });
       let color = getColorForWeek(currentWeekStart, nextWeekStart, highlightCriteria);
       let lived = nextWeekStart <= now;

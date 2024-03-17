@@ -2,6 +2,15 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import LifeTable from '../components/LifeTable';
 import Week from '../components/Week';
+import { DateTime } from 'luxon';
+
+const highlightCriteria = [
+  {
+    date: DateTime.now().toISODate(),
+    color: 'red' // Assuming you want the current week to be highlighted in red
+  }
+];
+
 
 export default function Home() {
   return (
@@ -18,14 +27,21 @@ export default function Home() {
 
 
         <p className={styles.description}>
+		  An experiment in mortality.
         </p>
+
+		 <LifeTable birthday="2001-12-14" highlightCriteria={highlightCriteria}/>
       </main>
 
 
-	 <LifeTable birthday="2001-12-14" />
+
 
 
       <footer>
+
+
+			<p>*years have been normalized to 52 weeks (the last week of the year contains the extra 1-2 days)
+			 <br /><br /><br />inspired by Life In Weeks and the Tail End by WaitButWhy</p>
 
       </footer>
 

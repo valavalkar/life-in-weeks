@@ -1,1 +1,1 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+Anand's Life in Weeks inspired by Tim Urban's Life in Weeks and The Tail End

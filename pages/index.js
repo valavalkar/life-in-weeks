@@ -40,14 +40,58 @@ const treeData = [
       {
         id: 'family-1',
         name: 'Bubbly',
+		highlightCriteria: [
+			{
+				date: '2006-02-04',
+				color: 'blue', // Highlight Bubbly's birthday in blue
+				label: 'Bubbly\'s Birthday'
+			},
+			{
+				start: '2006-02-05',
+				end: '2021-05-30',
+				color: 'blue',
+			},
+			{
+				start: '2021-08-12',
+				end: '2021-08-21',
+				color: 'blue',
+			}
+		],
+		timesPerYear: 5
+
       },
       {
         id: 'family-2',
         name: 'Amma',
+		timesPerYear: 5,
+		highlightCriteria: [{
+				start: '2001-12-14',
+				end: '2021-05-30',
+				color: 'blue',
+			},
+			{
+				start: '2021-08-12',
+				end: '2021-08-21',
+				color: 'blue',
+			}
+		]
       },
       {
         id: 'family-3',
         name: 'Baba',
+		timesPerYear: 5,
+		highlightCriteria: [
+			{
+				start: '2001-12-14',
+				end: '2021-05-30',
+				color: 'blue',
+			},
+			{
+				start: '2021-08-12',
+				end: '2021-08-21',
+				color: 'blue',
+			}
+		]
       },
     ],
   },
@@ -58,10 +102,32 @@ const treeData = [
       {
         id: 'friends-1',
         name: 'Arnav',
+		timesPerYear: 3,
+		highlightCriteria: [
+			{
+				start: '2012-08-14',
+				end: '2021-01-15',
+				color: 'orange'
+			},
+			{
+				start: '2021-08-21',
+				end: '2021-12-15',
+				color: 'orange',
+			},
+		]
       },
       {
         id: 'friends-2',
         name: 'Aryan',
+		timesPerYear: 4,
+		highlightCriteria: [
+			{
+				start: '2013-08-14',
+				end: '2021-05-30',
+				color: 'orange'
+			},
+		]
+
       },
       {
         id: 'friends-3',
@@ -70,22 +136,80 @@ const treeData = [
       {
         id: 'friends-4',
         name: 'Brooke',
+		timesPerYear: 3
       },
       {
         id: 'friends-5',
         name: 'Dylan',
+		timesPerYear: 3,
+		highlightCriteria: [
+			{
+				start: '2022-06-06',
+				end: '2022-08-21',
+				color: 'orange',
+			},
+			{
+				start: '2022-12-17',
+				end: '2022-12-19',
+				color: 'orange',
+			},
+			{
+				start: '2023-01-02',
+				end: '2023-01-15',
+				color: 'orange',
+			},
+			{
+				date: '2023-03-24',
+				color: 'orange',
+			},
+			{
+				start: '2023-06-03',
+				end: '2023-06-16',
+				color: 'orange',
+			},
+			{
+				start: '2023-07-15',
+				end: '2023-07-16',
+				color: 'orange',
+			},
+			{
+				start: '2023-11-20',
+				end: '2023-11-27',
+				color: 'orange',
+			},
+			{
+				start: '2023-12-19',
+				end: '2023-12-25',
+				color: 'orange',
+			},
+			{
+				start: '2023-12-19',
+				end: '2023-12-27',
+				color: 'orange',
+			},
+		]
       },
       {
         id: 'friends-6',
         name: 'Mark',
+		timesPerYear: 2
       },
       {
         id: 'friends-7',
         name: 'Praneel',
+		timesPerYear: 2,
+		highlightCriteria: [
+			{
+				start: '2023-12-19',
+				end: '2023-12-27',
+				color: 'orange',
+			},
+		]
       },
       {
         id: 'friends-8',
         name: 'Parth',
+		timesPerYear: 2
       },
     ],
   },
@@ -122,39 +246,65 @@ export default function Home() {
 const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [checked, setChecked] = useState([]);
 
-const handleToggle = (value, childrenIds) => {
-  const currentIndex = checked.indexOf(value);
-  let newChecked = [...checked];
-
-  if (currentIndex === -1) {
-    newChecked.push(value);
-    // Add all children if any child node is checked
-    if (childrenIds) {
-      newChecked = [...newChecked, ...childrenIds];
-    }
-  } else {
-    newChecked.splice(currentIndex, 1);
-    // Remove all children if parent node is unchecked
-    if (childrenIds) {
-      newChecked = newChecked.filter((id) => !childrenIds.includes(id));
-    }
-  }
-
-  setChecked(newChecked);
+const handleToggle = (value) => {
+  // Set checked to only the current value, removing all others
+  setChecked([value]);
+  updateHighlightCriteria([value]); // Update highlight criteria based on new checked state
 };
 
-
-	const handleParentToggle = (value, children = []) => {
-  const allChildrenChecked = children.every(child => checked.includes(child.id));
-  const someChildrenChecked = children.some(child => checked.includes(child.id));
-  if(allChildrenChecked || someChildrenChecked){
-    // If all or some children are checked, uncheck all children and the parent
-    handleToggle(value, children);
+const handleParentToggle = (value, children = []) => {
+  // If the current value is already checked, uncheck it
+  if (checked.includes(value)) {
+    setChecked([]);
+    updateHighlightCriteria([]); // Update highlight criteria for no selection
   } else {
-    // If no children are checked, check the parent and all children
-    handleToggle(value, children);
+    // Check the current value and uncheck all others
+    setChecked([value]);
+    updateHighlightCriteria([value]); // Update highlight criteria based on new checked state
   }
 };
+
+// const handleToggle = (value, childrenIds) => {
+//   const currentIndex = checked.indexOf(value);
+//   let newChecked = [...checked];
+
+//   if (currentIndex === -1) {
+//     newChecked.push(value);
+//     // Add all children if any child node is checked
+//     if (childrenIds && childrenIds.length) {
+//       newChecked = [...newChecked, ...childrenIds.map(child => child.id)];
+//     }
+//   } else {
+//     newChecked.splice(currentIndex, 1);
+//     // Remove all children if parent node is unchecked
+//     if (childrenIds && childrenIds.length) {
+//       newChecked = newChecked.filter((id) => !childrenIds.map(child => child.id).includes(id));
+//     }
+//   }
+
+//   setChecked(newChecked);
+//   updateHighlightCriteria(newChecked); // Update highlight criteria based on new checked state
+// };
+
+
+
+// 	const handleParentToggle = (value, children = []) => {
+//   const currentIndex = checked.indexOf(value);
+//   let newChecked = [...checked];
+//   const childrenIds = children.map(child => child.id);
+
+//   if (currentIndex === -1) {
+//     newChecked.push(value);
+//     newChecked = [...newChecked, ...childrenIds];
+//   } else {
+//     // If unchecking, remove the parent and all its children
+//     newChecked = newChecked.filter((id) => id !== value && !childrenIds.includes(id));
+//   }
+
+//   setChecked(newChecked);
+//   updateHighlightCriteria(newChecked); // Update highlight criteria based on new checked state
+// };
+
 
   const renderTree = (nodes) => (
   <TreeItem key={nodes.id} nodeId={nodes.id} label={
@@ -188,12 +338,56 @@ const handleToggle = (value, childrenIds) => {
 	event.stopPropagation();
 	};
 
-  const highlightCriteria = [
-    {
+  const [currentHighlightCriteria, setCurrentHighlightCriteria] = useState([
+  {
+    date: DateTime.now().toISODate(),
+    color: 'red',
+    label: 'This Week',
+  },
+
+]);
+
+  const updateHighlightCriteria = (newChecked) => {
+  if (newChecked.length === 0) {
+    setCurrentHighlightCriteria([
+      {
+        date: DateTime.now().toISODate(),
+        color: 'red',
+        label: 'This Week',
+      },
+    ]);
+    return;
+  }
+
+  let aggregatedCriteria = [];
+
+  const findAndAggregateCriteria = (nodes, checkedIds) => {
+    nodes.forEach(node => {
+      if (checkedIds.includes(node.id)) {
+        if (node.highlightCriteria) {
+          aggregatedCriteria = [...aggregatedCriteria, ...node.highlightCriteria];
+        }
+      }
+      if (node.children) {
+        findAndAggregateCriteria(node.children, checkedIds);
+      }
+    });
+  };
+
+  findAndAggregateCriteria(treeData, newChecked);
+
+  if (aggregatedCriteria.length === 0) {
+    aggregatedCriteria.push({
       date: DateTime.now().toISODate(),
-      color: 'red', // Highlight the current week in red
-    },
-  ];
+      color: 'red',
+      label: 'This Week',
+    });
+  }
+
+  setCurrentHighlightCriteria(aggregatedCriteria);
+};
+
+
 
   // Create a theme instance.
   const theme = createTheme({
@@ -264,7 +458,7 @@ const handleToggle = (value, childrenIds) => {
             An experiment in mortality.
           </Typography>
 
-          <LifeTable birthday="2001-12-14" highlightCriteria={highlightCriteria} />
+          <LifeTable birthday="2001-12-14" highlightCriteria={currentHighlightCriteria} />
         </main>
       </Container>
 

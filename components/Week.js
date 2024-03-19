@@ -3,7 +3,7 @@ import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional for styles
 import { DateTime } from 'luxon';
 
-function Week({ lived, color, startDate, endDate, weekNumberInYear }) {
+function Week({ lived, color, startDate, endDate, weekNumberInYear, label }) {
   const style = {
     width: '20px',
     height: '20px',
@@ -22,6 +22,8 @@ function Week({ lived, color, startDate, endDate, weekNumberInYear }) {
 
   const tooltipContent = (
     <div>
+		{label && <strong>{label}<br/></strong>}
+
       <strong>Week:</strong> {weekInLife}<br/>
 	  <strong>Age:</strong> {age}<br/>
 	  <strong>Percent Complete:</strong> {percentage}<br/>

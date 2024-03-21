@@ -221,6 +221,12 @@ const treeData = [
   {
     id: 'career',
     name: 'Career',
+	highlightCriteria: [
+		{
+			color: 'green',
+			start:
+		}
+	],
     children: [],
   },
   {

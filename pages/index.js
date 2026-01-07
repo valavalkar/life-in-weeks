@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import LifeTable from '../components/LifeTable';
 import { DateTime } from 'luxon';
-import { Container, Typography, AppBar, Toolbar, Link, CssBaseline, ThemeProvider, createTheme, Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
+import { Container, Typography, AppBar, Toolbar, Link, CssBaseline, ThemeProvider, createTheme, Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu'; // Import the menu icon for the button
 
 import {Checkbox, FormGroup, FormControlLabel } from '@mui/material';
@@ -224,7 +224,7 @@ const treeData = [
 	highlightCriteria: [
 		{
 			color: 'green',
-			start:
+			start: '2021-08-12',
 		}
 	],
     children: [],
@@ -251,6 +251,20 @@ const treeData = [
 export default function Home() {
 const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [checked, setChecked] = useState([]);
+  const [viewMode, setViewMode] = useState('weeks'); // 'weeks' or 'days'
+  const [currentDate, setCurrentDate] = useState(null); // Will be set on client-side
+
+  // Set current date on client-side to avoid build-time freezing
+  useEffect(() => {
+    setCurrentDate(DateTime.now().toISODate());
+  }, []);
+
+  // Initialize highlight criteria when currentDate is set
+  useEffect(() => {
+    if (currentDate && currentHighlightCriteria.length === 0) {
+      updateHighlightCriteria([]);
+    }
+  }, [currentDate]);
 
 const handleToggle = (value) => {
   // Set checked to only the current value, removing all others
@@ -344,20 +358,15 @@ const handleParentToggle = (value, children = []) => {
 	event.stopPropagation();
 	};
 
-  const [currentHighlightCriteria, setCurrentHighlightCriteria] = useState([
-  {
-    date: DateTime.now().toISODate(),
-    color: 'red',
-    label: 'This Week',
-  },
-
-]);
+  const [currentHighlightCriteria, setCurrentHighlightCriteria] = useState([]);
 
   const updateHighlightCriteria = (newChecked) => {
+  const today = currentDate || DateTime.now().toISODate();
+
   if (newChecked.length === 0) {
     setCurrentHighlightCriteria([
       {
-        date: DateTime.now().toISODate(),
+        date: today,
         color: 'red',
         label: 'This Week',
       },
@@ -384,7 +393,7 @@ const handleParentToggle = (value, children = []) => {
 
   if (aggregatedCriteria.length === 0) {
     aggregatedCriteria.push({
-      date: DateTime.now().toISODate(),
+      date: today,
       color: 'red',
       label: 'This Week',
     });
@@ -464,7 +473,28 @@ const handleParentToggle = (value, children = []) => {
             An experiment in mortality.
           </Typography>
 
-          <LifeTable birthday="2001-12-14" highlightCriteria={currentHighlightCriteria} />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+            <ToggleButtonGroup
+              value={viewMode}
+              exclusive
+              onChange={(_, newMode) => {
+                if (newMode !== null) {
+                  setViewMode(newMode);
+                }
+              }}
+              aria-label="view mode"
+              size="small"
+            >
+              <ToggleButton value="weeks" aria-label="weeks view">
+                Weeks
+              </ToggleButton>
+              <ToggleButton value="days" aria-label="days view">
+                Days
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
+
+          <LifeTable birthday="2001-12-14" highlightCriteria={currentHighlightCriteria} viewMode={viewMode} currentDate={currentDate} />
         </main>
       </Container>
 

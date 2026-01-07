@@ -1,34 +1,41 @@
 import React from 'react';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional for styles
-import { DateTime } from 'luxon';
 
-function Week({ lived, color, startDate, endDate, weekNumberInYear, label }) {
+function Week({ lived, color, startDate, endDate, weekNumberInYear, label, age, calendarYear, viewMode = 'weeks', dayOfYear }) {
+  const isWeeksView = viewMode === 'weeks';
+
   const style = {
-    width: '20px',
-    height: '20px',
-    border: '1px solid #000',
+    width: isWeeksView ? '20px' : '5px',
+    height: isWeeksView ? '20px' : '5px',
+    border: isWeeksView ? '1px solid #000' : 'none',
     borderRadius: '2px',
     backgroundColor: color ? color : (lived ? '#68D391' : '#EDF2F7'),
     boxSizing: 'border-box',
+    margin: isWeeksView ? '0' : '0.5px',
   };
 
-  const startDateTime = DateTime.fromISO(startDate);
-  const birthday = DateTime.fromISO("2001-12-14");
-  const weekInLife = startDateTime.diff(birthday, 'weeks').weeks + 1;
+  // Calculate percentage complete
+  const percentComplete = (age / 90 * 100).toFixed(2);
 
-  const age = startDateTime.diff(birthday, 'years').years;
-  const percentage = age / 90 * 100;
-
-  const tooltipContent = (
+  const tooltipContent = isWeeksView ? (
     <div>
-		{label && <strong>{label}<br/></strong>}
-
-      <strong>Week:</strong> {weekInLife}<br/>
-	  <strong>Age:</strong> {age}<br/>
-	  <strong>Percent Complete:</strong> {percentage}<br/>
+      {label && <><strong>{label}</strong><br/></>}
+      <strong>Calendar Year:</strong> {calendarYear}<br/>
+      <strong>Week in Year:</strong> {weekNumberInYear}<br/>
+      <strong>Age:</strong> {age.toFixed(2)}<br/>
+      <strong>Percent Complete:</strong> {percentComplete}%<br/>
       <strong>From:</strong> {startDate.toISODate()}<br/>
       <strong>To:</strong> {endDate.toISODate()}
+    </div>
+  ) : (
+    <div>
+      {label && <><strong>{label}</strong><br/></>}
+      <strong>Date:</strong> {startDate.toISODate()}<br/>
+      <strong>Calendar Year:</strong> {calendarYear}<br/>
+      <strong>Day of Year:</strong> {dayOfYear}<br/>
+      <strong>Age:</strong> {age.toFixed(2)}<br/>
+      <strong>Percent Complete:</strong> {percentComplete}%
     </div>
   );
 
